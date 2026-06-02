@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.P.S. - Cyber Intelligence</title>
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-color: #f8fafc;
+            --accent: #38bdf8;
+            --accent-glow: rgba(56, 189, 248, 0.5);
+            --success: #4ade80;
+            --danger: #f87171;
+        }
+
+        .theme-sunset {
+            --bg-color: #2e1065;
+            --card-bg: rgba(124, 58, 237, 0.3);
+            --accent: #f43f5e;
+            --accent-glow: rgba(244, 63, 94, 0.5);
+        }
+
+        .theme-matrix {
+            --bg-color: #050505;
+            --card-bg: rgba(0, 20, 0, 0.8);
+            --text-color: #00ff41;
+            --accent: #00ff41;
+            --accent-glow: rgba(0, 255, 65, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.5s ease;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        header { text-align: center; }
+        h1 { font-size: 2rem; letter-spacing: 2px; margin-bottom: 15px; }
+        .accent { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
+
+        .scoreboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            border-radius: 16px;
+        }
+
+        .score-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-box .label { font-size: 0.75rem; text-transform: uppercase; opacity: 0.7; }
+        .score-box .value { font-size: 1.5rem; font-weight: bold; color: var(--accent); }
+        .currency-display { margin-top: 10px; font-weight: bold; }
+
+        .arena { display: flex; justify-content: space-around; align-items: center; margin: 20px 0; }
+        .display-side { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        
+        .choice-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 3px solid var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .vs-badge { font-weight: bold; font-size: 1.2rem; opacity: 0.5; }
+        .result-section { text-align: center; min-height: 70px; }
+        #ai-thinking-log { font-size: 0.85rem; opacity: 0.6; font-style: italic; margin-top: 5px; }
+
+        .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        
+        .game-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, rgba(0,0,0,0.1) 100%);
+            border: none;
+            color: white;
+            padding: 15px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .game-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 15px var(--accent-glow); }
+        .game-btn:active { transform: translateY(1px); }
+
+        footer { display: flex; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
+        
+        .sub-btn {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--text-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .sub-btn:hover { background: var(--accent); color: var(--bg-color); }
+
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); display: flex; justify-content: center; align-items: center;
+            z-index: 100; backdrop-filter: blur(5px); transition: opacity 0.3s ease;
+        }
+
+        .modal.hidden { display: none; opacity: 0; }
+        .modal-content { background: var(--bg-color); border: 2px solid var(--accent); padding: 30px; border-radius: 20px; width: 90%; max-width: 450px; text-align: center; }
+        .shop-grid { display: flex; flex-direction: column; gap: 15px; margin: 20px 0; }
+        .shop-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.05); padding: 12px 20px; border-radius: 10px; }
+
+        .buy-btn, .close-modal-btn, .danger-btn { padding: 8px 14px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; }
+        .buy-btn { background: var(--accent); color: var(--bg-color); }
+        .buy-btn.equipped { background: var(--success); color: white; cursor: default;}
+        .close-modal-btn { background: #64748b; color: white; margin-top: 15px; width: 100%;}
+        .danger-btn { background: var(--danger); color: white; margin-bottom: 10px; width: 100%;}
+
+        .win-flash { color: var(--success); animation: pulse 0.5s; }
+        .lose-flash { color: var(--danger); animation: pulse 0.5s; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        @media (max-width: 480px) {
+            .app-container { padding: 15px; border-radius: 0; min-height: 100vh; justify-content: center; }
+            .choice-circle { width: 75px; height: 75px; font-size: 2rem; }
+            .controls { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body class="theme-neon">
+
+    <div class="app-container">
+        <header>
+            <h1>S.P.S. <span class="accent">AI v2.6</span></h1>
+            <div class="scoreboard">
+                <div class="score-box">
+                    <span class="label">Spieler</span>
+                    <span id="player-score" class="value">0</span>
+                </div>
+                <div class="score-box">
+                    <span class="label">Streak</span>
+                    <span id="current-streak" class="value">0</span>
+                </div>
+                <div class="score-box">
+                    <span class="label">KI (Cyber)</span>
+                    <span id="ai-score" class="value">0</span>
+                </div>
+            </div>
+            <div class="currency-display">
+                <span class="coin-icon">🪙</span> <span id="credits">0</span> Credits
+            </div>
+        </header>
+
+        <main class="arena">
+            <div class="display-side player-side">
+                <h3>Du</h3>
+                <div id="player-choice-display" class="choice-circle">?</div>
+            </div>
+            <div class="vs-badge">VS</div>
+            <div class="display-side ai-side">
+                <h3>KI</h3>
+                <div id="ai-choice-display" class="choice-circle">?</div>
+            </div>
+        </main>
+
+        <section class="result-section">
+            <h2 id="round-result">Wähle deine Waffe!</h2>
+            <p id="ai-thinking-log">Die KI beobachtet dich...</p>
+        </section>
+
+        <nav class="controls">
+            <button class="game-btn" data-choice="rock">🪨 Stein</button>
+            <button class="game-btn" data-choice="paper">📄 Papier</button>
+            <button class="game-btn" data-choice="scissors">✂️ Schere</button>
+        </nav>
+
+        <footer>
+            <button id="open-shop-btn" class="sub-btn">🛒 Shop & Themes</button>
+            <button id="open-stats-btn" class="sub-btn">📊 KI-Analyse</button>
+        </footer>
+    </div>
+
+    <div id="shop-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Theme Shop</h2>
+            <p>Kaufe neue Oberflächen mit deinen In-Game Credits!</p>
+            <div class="shop-grid">
+                <div class="shop-item" data-theme="theme-neon" data-price="0">
+                    <h3>Cyber Neon</h3>
+                    <p>Standard</p>
+                    <button class="buy-btn equipped" disabled>Ausrüsten</button>
+                </div>
+                <div class="shop-item" data-theme="theme-sunset" data-price="50">
+                    <h3>Retro Sunset</h3>
+                    <p>Preis: 50 🪙</p>
+                    <button class="buy-btn">Kaufen</button>
+                </div>
+                <div class="shop-item" data-theme="theme-matrix" data-price="150">
+                    <h3>Digital Matrix</h3>
+                    <p>Preis: 150 🪙</p>
+                    <button class="buy-btn">Kaufen</button>
+                </div>
+            </div>
+            <button class="close-modal-btn">Schließen</button>
+        </div>
+    </div>
+
+    <div id="stats-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>KI-Datenanalyse</h2>
+            <div class="stats-data">
+                <p>Spiele gesamt: <span id="stat-games">0</span></p>
+                <p>Deine Win-Rate: <span id="stat-winrate">0%</span></p>
+                <p>Höchster Streak aller Zeiten: <span id="stat-max-streak">0</span></p>
+                <hr style="margin:15px 0; opacity:0.2;">
+                <h3>Deine Lieblings-Züge:</h3>
+                <p>Stein: <span id="fav-rock">0</span> | Papier: <span id="fav-paper">0</span> | Schere: <span id="fav-scissors">0</span></p>
+                <p style="font-size:0.75rem; color:var(--accent); margin-top:10px;">*Die KI nutzt diese Verteilung, um dich zu kontern!</p>
+            </div>
+            <button id="reset-data-btn" class="danger-btn" style="margin-top:15px;">Daten löschen</button>
+            <button class="close-modal-btn">Schließen</button>
+        </div>
+    </div>
+
+    <script>
+        // --- JAVASCRIPT LOGIC ---
+        let state = {
+            scores: { player: 0, ai: 0, currentStreak: 0 },
+            stats: { totalGames: 0, playerWins: 0, maxStreak: 0, choicesCount: { rock: 0, paper: 0, scissors: 0 } },
+            credits: 0,
+            unlockedThemes: ['theme-neon'],
+            activeTheme: 'theme-neon',
+            history: []
+        };
+
+        let aiPatternMemory = {};
+        const emojiMap = { rock: '🪨', paper: '📄', scissors: '✂️' };
+
+        function loadData() {
+            const savedState = localStorage.getItem('sps_ai_state');
+            const savedMemory = localStorage.getItem('sps_ai_memory');
+            if (savedState) state = JSON.parse(savedState);
+            if (savedMemory) aiPatternMemory = JSON.parse(savedMemory);
+            if(!state.stats.choicesCount) state.stats.choicesCount = { rock: 0, paper: 0, scissors: 0 };
+        }
+
+        function saveData() {
+            localStorage.setItem('sps_ai_state', JSON.stringify(state));
+            localStorage.setItem('sps_ai_memory', JSON.stringify(aiPatternMemory));
+        }
+
+        function getAiChoice() {
+            const history = state.history;
+            const logPara = document.getElementById('ai-thinking-log');
+
+            if (history.length < 2) {
+                logPara.innerText = "KI rät zufällig (Datenbasis wird aufgebaut...)";
+                return getRandomChoice();
+            }
+
+            const key = `${history[history.length - 2]}-${history[history.length - 1]}`;
+
+            if (!aiPatternMemory[key]) {
+                logPara.innerText = "KI analysiert neues Verhaltensmuster...";
+                return getRandomChoice();
+            }
+
+            const predictions = aiPatternMemory[key];
+            let predictedPlayerChoice = 'rock';
+            let maxCount = -1;
+
+            for (const choice in predictions) {
+                if (predictions[choice] > maxCount) {
+                    maxCount = predictions[choice];
+                    predictedPlayerChoice = choice;
+                }
+            }
+
+            logPara.innerText = `KI prognostiziert bei dir '${predictedPlayerChoice}' (Muster erkannt!)`;
+
+            if (predictedPlayerChoice === 'rock') return 'paper';
+            if (predictedPlayerChoice === 'paper') return 'scissors';
+            if (predictedPlayerChoice === 'scissors') return 'rock';
+        }
+
+        function getRandomChoice() {
+            const choices = ['rock', 'paper', 'scissors'];
+            return choices[Math.floor(Math.random() * choices.length)];
+        }
+
+        function recordPlayerPattern(nextChoice) {
+            const history = state.history;
+            if (history.length >= 2) {
+                const key = `${history[history.length - 2]}-${history[history.length - 1]}`;
+                if (!aiPatternMemory[key]) aiPatternMemory[key] = { rock: 0, paper: 0, scissors: 0 };
+                aiPatternMemory[key][nextChoice]++;
+            }
+            state.history.push(nextChoice);
+            state.stats.choicesCount[nextChoice]++;
+        }
+
+        function playRound(playerChoice) {
+            const aiChoice = getAiChoice();
+            recordPlayerPattern(playerChoice);
+
+            document.getElementById('player-choice-display').innerText = emojiMap[playerChoice];
+            document.getElementById('ai-choice-display').innerText = emojiMap[aiChoice];
+
+            let resultText = "";
+            const resultHeading = document.getElementById('round-result');
+            resultHeading.className = "";
+
+            if (playerChoice === aiChoice) {
+                resultText = "Unentschieden! 🤝";
+            } else if (
+                (playerChoice === 'rock' && aiChoice === 'scissors') ||
+                (playerChoice === 'paper' && aiChoice === 'rock') ||
+                (playerChoice === 'scissors' && aiChoice === 'paper')
+            ) {
+                resultText = "Du gewinnst! 🎉";
+                state.scores.player++;
+                state.scores.currentStreak++;
+                state.credits += 10 + (state.scores.currentStreak * 2);
+                resultHeading.classList.add('win-flash');
+            } else {
+                resultText = "Cyber-KI gewinnt! 🤖";
+                state.scores.ai++;
+                state.scores.currentStreak = 0;
+                resultHeading.classList.add('lose-flash');
+            }
+
+            state.stats.totalGames++;
+            if(playerChoice !== aiChoice && resultText.startsWith("Du")) state.stats.playerWins++;
+            if(state.scores.currentStreak > state.stats.maxStreak) state.stats.maxStreak = state.scores.currentStreak;
+
+            resultHeading.innerText = resultText;
+            updateDOM();
+            saveData();
+        }
+
+        function updateDOM() {
+            document.getElementById('player-score').innerText = state.scores.player;
+            document.getElementById('ai-score').innerText = state.scores.ai;
+            document.getElementById('current-streak').innerText = state.scores.currentStreak;
+            document.getElementById('credits').innerText = state.credits;
+
+            document.body.className = state.activeTheme;
+
+            document.querySelectorAll('.shop-item').forEach(item => {
+                const theme = item.getAttribute('data-theme');
+                const btn = item.querySelector('.buy-btn');
+                const price = parseInt(item.getAttribute('data-price'));
+
+                if (state.activeTheme === theme) {
+                    btn.innerText = "Ausrüstet";
+                    btn.className = "buy-btn equipped";
+                    btn.disabled = true;
+                } else if (state.unlockedThemes.includes(theme)) {
+                    btn.innerText = "Ausrüsten";
+                    btn.className = "buy-btn";
+                    btn.disabled = false;
+                } else {
+                    btn.innerText = `Kaufen (${price} 🪙)`;
+                    btn.className = "buy-btn";
+                    btn.disabled = state.credits < price;
+                }
+            });
+        }
+
+        function updateStatsModal() {
+            document.getElementById('stat-games').innerText = state.stats.totalGames;
+            const wr = state.stats.totalGames > 0 ? Math.round((state.stats.playerWins / state.stats.totalGames) * 100) : 0;
+            document.getElementById('stat-winrate').innerText = `${wr}%`;
+            document.getElementById('stat-max-streak').innerText = state.stats.maxStreak;
+            
+            document.getElementById('fav-rock').innerText = state.stats.choicesCount.rock;
+            document.getElementById('fav-paper').innerText = state.stats.choicesCount.paper;
+            document.getElementById('fav-scissors').innerText = state.stats.choicesCount.scissors;
+        }
+
+        document.querySelectorAll('.game-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const choice = e.target.closest('.game-btn').getAttribute('data-choice');
+                playRound(choice);
+            });
+        });
+
+        const shopModal = document.getElementById('shop-modal');
+        const statsModal = document.getElementById('stats-modal');
+
+        document.getElementById('open-shop-btn').addEventListener('click', () => { shopModal.classList.remove('hidden'); updateDOM(); });
+        document.getElementById('open-stats-btn').addEventListener('click', () => { statsModal.classList.remove('hidden'); updateStatsModal(); });
+
+        document.querySelectorAll('.close-modal-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                shopModal.classList.add('hidden');
+                statsModal.classList.add('hidden');
+            });
+        });
+
+        document.querySelectorAll('.shop-item .buy-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const item = e.target.closest('.shop-item');
+                const theme = item.getAttribute('data-theme');
+                const price = parseInt(item.getAttribute('data-price'));
+
+                if (state.unlockedThemes.includes(theme)) {
+                    state.activeTheme = theme;
+                } else if (state.credits >= price) {
+                    state.credits -= price;
+                    state.unlockedThemes.push(theme);
+                    state.activeTheme = theme;
+                }
+                updateDOM();
+                saveData();
+            });
+        });
+
+        document.getElementById('reset-data-btn').addEventListener('click', () => {
+            if(confirm("Möchtest du wirklich alle Statistiken und KI-Muster löschen?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        });
+
+        loadData();
+        updateDOM();
+    </script>
+</body>
+</html>
