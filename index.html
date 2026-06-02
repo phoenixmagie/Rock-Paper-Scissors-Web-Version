@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S.P.S. - Cyber Intelligence</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-neon">
+
+    <div class="app-container">
+        <header>
+            <h1>S.P.S. <span class="accent">AI v2.6</span></h1>
+            <div class="scoreboard">
+                <div class="score-box">
+                    <span class="label">Spieler</span>
+                    <span id="player-score" class="value">0</span>
+                </div>
+                <div class="score-box">
+                    <span class="label">Streak</span>
+                    <span id="current-streak" class="value">0</span>
+                </div>
+                <div class="score-box">
+                    <span class="label">KI (Cyber)</span>
+                    <span id="ai-score" class="value">0</span>
+                </div>
+            </div>
+            <div class="currency-display">
+                <span class="coin-icon">🪙</span> <span id="credits">0</span> Credits
+            </div>
+        </header>
+
+        <main class="arena">
+            <div class="display-side player-side">
+                <h3>Du</h3>
+                <div id="player-choice-display" class="choice-circle">?</div>
+            </div>
+            
+            <div class="vs-badge">VS</div>
+
+            <div class="display-side ai-side">
+                <h3>KI</h3>
+                <div id="ai-choice-display" class="choice-circle">?</div>
+            </div>
+        </main>
+
+        <section class="result-section">
+            <h2 id="round-result">Wähle deine Waffe!</h2>
+            <p id="ai-thinking-log">Die KI beobachtet dich...</p>
+        </section>
+
+        <nav class="controls">
+            <button class="game-btn" data-choice="rock">🪨 Stein</button>
+            <button class="game-btn" data-choice="paper">📄 Papier</button>
+            <button class="game-btn" data-choice="scissors">✂️ Schere</button>
+        </nav>
+
+        <footer>
+            <button id="open-shop-btn" class="sub-btn">🛒 Shop & Themes</button>
+            <button id="open-stats-btn" class="sub-btn">📊 KI-Analyse</button>
+        </footer>
+    </div>
+
+    <div id="shop-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Theme Shop</h2>
+            <p>Kaufe neue Oberflächen mit deinen In-Game Credits!</p>
+            <div class="shop-grid">
+                <div class="shop-item" data-theme="theme-neon" data-price="0">
+                    <h3>Cyber Neon</h3>
+                    <p>Standard</p>
+                    <button class="buy-btn equipped" disabled>Ausrüsten</button>
+                </div>
+                <div class="shop-item" data-theme="theme-sunset" data-price="50">
+                    <h3>Retro Sunset</h3>
+                    <p>Preis: 50 🪙</p>
+                    <button class="buy-btn">Kaufen</button>
+                </div>
+                <div class="shop-item" data-theme="theme-matrix" data-price="150">
+                    <h3>Digital Matrix</h3>
+                    <p>Preis: 150 🪙</p>
+                    <button class="buy-btn">Kaufen</button>
+                </div>
+            </div>
+            <button class="close-modal-btn">Schließen</button>
+        </div>
+    </div>
+
+    <div id="stats-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>KI-Datenanalyse</h2>
+            <div class="stats-data">
+                <p>Spiele gesamt: <span id="stat-games">0</span></p>
+                <p>Deine Win-Rate: <span id="stat-winrate">0%</span></p>
+                <p>Höchster Streak aller Zeiten: <span id="stat-max-streak">0</span></p>
+                <hr>
+                <h3>Deine Lieblings-Züge:</h3>
+                <p>Stein: <span id="fav-rock">0</span> | Papier: <span id="fav-paper">0</span> | Schere: <span id="fav-scissors">0</span></p>
+                <p class="hint">*Die KI nutzt diese Verteilung, um dich zu kontern!</p>
+            </div>
+            <button id="reset-data-btn" class="danger-btn">Daten löschen</button>
+            <button class="close-modal-btn">Schließen</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
