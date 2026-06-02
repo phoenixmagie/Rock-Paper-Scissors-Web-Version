@@ -28,3 +28,9 @@ Sobald der Spieler zwei Runden gespielt hat (z. B. erst `Stein`, dann `Papier`),
 `rock-paper` $\rightarrow$ führt in Zukunft mit höherer Wahrscheinlichkeit zu `scissors`. 
 
 Tritt diese Kombination erneut auf, wählt die KI automatisch die Konter-Waffe (hier: `Stein`). Je länger eine Spielesession dauert, desto unmöglicher wird es, die KI dauerhaft zu schlagen.
+
+---
+
+## ⚙️ Installation
+
+Such dir entweder den games Ordner oder den single-page Ordner aus, und gehe in den hinein. Dann downloadest du **alle** Dateien, und öffnest diese Lokal auf deinem Gerät.
